@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,13 +13,7 @@ namespace WebPorject
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
+       
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -37,15 +32,27 @@ namespace WebPorject
                 app.UseExceptionHandler("/Error");
             }
 
-            app.UseStaticFiles();
+            app.Use(async (context, next) =>
+            {
+                await context.Response.WriteAsync("Hello from my first  middleware  ");
+                await next();
+                await context.Response.WriteAsync("Hello from my first ------- middleware  ");
+            });
+
+            app.Use(async (context, next) =>
+            {
+                await context.Response.WriteAsync(" Hello from my second  middleware");
+                await next();
+            });
 
             app.UseRouting();
 
-            app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapRazorPages();
+                endpoints.MapGet("/", async context =>
+                {
+                    await context.Response.WriteAsync(" Hello world ");
+                });
             });
         }
     }
