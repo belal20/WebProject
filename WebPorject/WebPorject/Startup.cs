@@ -17,7 +17,7 @@ namespace WebPorject
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -27,32 +27,12 @@ namespace WebPorject
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-            }
-
-            app.Use(async (context, next) =>
-            {
-                await context.Response.WriteAsync("Hello from my first  middleware  ");
-                await next();
-                await context.Response.WriteAsync("Hello from my first ------- middleware  ");
-            });
-
-            app.Use(async (context, next) =>
-            {
-                await context.Response.WriteAsync(" Hello from my second  middleware");
-                await next();
-            });
-
+         
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync(" Hello world ");
-                });
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }
